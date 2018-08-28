@@ -41,7 +41,11 @@ function afterConnection() {
           message: "How many would you like?"
         }
       ])
-      .then(function(answer) {});
+      .then(function(answer) {
+        if (res[answer.itemID].stock_quantity < answer.itemQuantity) {
+          console.log("Insufficient quantity!");
+        }
+      });
 
     connection.end();
   });
