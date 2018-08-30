@@ -22,6 +22,7 @@ CREATE TABLE products
     INSERT INTO products
         (product_name, department_name, price, stock_quantity)
     VALUES
+        ("Pop up Tent", "Outdoor Gear", 45.89, 137),
         ("Sling Shoulder Backpack", "Outdoor Gear", 20.37, 300),
         ("Sneakers", "Clothing", 45.00, 50),
         ('Baseball Cap', 'Clothing', 20.00, 250),

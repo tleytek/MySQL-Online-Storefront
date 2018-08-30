@@ -35,7 +35,7 @@ function afterConnection() {
           message: "Input the ID # of the item you would like to purchase.",
           validate: function(value) {
             if (isNaN(value) === false) {
-              if (value >= 1 && value <= 9) {
+              if (value >= 1 && value <= 10) {
                 return true;
               }
             }
@@ -57,24 +57,75 @@ function afterConnection() {
       ])
       .then(function(answer) {
         var idArrayIndex = answer.itemID - 1;
+        var updatedQuantity = 0;
+        var totalCost = res[idArrayIndex].price * answer.itemQuantity;
+        var product_name = res[idArrayIndex].product_name;
         if (res[idArrayIndex].stock_quantity < answer.itemQuantity) {
-          console.log("Insufficient quantity!");
+          console.log(
+            "Sorry, there are only " +
+              res[idArrayIndex].stock_quantity +
+              " " +
+              res[idArrayIndex].product_name
+          );
           endConnection();
-        } else {
-          updateProduct();
+        } else if (res[idArrayIndex].stock_quantity >= answer.itemQuantity) {
+          updatedQuantity =
+            res[idArrayIndex].stock_quantity - answer.itemQuantity;
+          updateProduct(
+            product_name,
+            updatedQuantity,
+            totalCost,
+            answer.itemQuantity
+          );
         }
       });
   });
 }
 
-function updateProduct() {}
+function updateProduct(
+  product_name,
+  updatedQuantity,
+  totalCost,
+  customerQuantity
+) {
+  connection.query(
+    "UPDATE products SET ? WHERE ?",
+    [
+      {
+        stock_quantity: updatedQuantity
+      },
+      {
+        product_name: product_name
+      }
+    ],
+    function(err, res) {
+      console.log(
+        "Your order of " +
+          customerQuantity +
+          " " +
+          product_name +
+          " brings your total to: \n$" +
+          totalCost
+      );
+      endConnection();
+    }
+  );
+}
 
 function endConnection() {
-  inquirer.prompt([
-    {
-      type: "confirm",
-      name: "continue",
-      message: "Would you like to make another order?"
-    }
-  ]);
+  inquirer
+    .prompt([
+      {
+        type: "confirm",
+        name: "continue",
+        message: "Would you like to make another order?"
+      }
+    ])
+    .then(function(answer) {
+      if (answer.continue) {
+        afterConnection();
+      } else {
+        connection.end();
+      }
+    });
 }
