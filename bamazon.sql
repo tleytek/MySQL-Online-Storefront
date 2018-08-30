@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS bamazonDB
+DROP DATABASE IF EXISTS bamazonDB;
 
-CREATE DATABASE bamazonDB
+CREATE DATABASE bamazonDB;
 
 USE bamazonDB;
 
@@ -9,9 +9,9 @@ CREATE TABLE products
     id INT NOT NULL
     AUTO_INCREMENT,
     product_name VARCHAR
-    (30) NULL,
+    (40) NULL,
     department_name VARCHAR
-    (30) NULL,
+    (40) NULL,
     price DECIMAL
     (10,2) NULL,
     stock_quantity INT NULL,
