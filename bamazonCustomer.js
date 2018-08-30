@@ -11,7 +11,6 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err) {
   if (err) throw err;
-  console.log("connected as id " + connection.threadId);
   afterConnection();
 });
 
@@ -33,20 +32,49 @@ function afterConnection() {
         {
           type: "input",
           name: "itemID",
-          message: "Input the ID # of the item you would like to purchase."
+          message: "Input the ID # of the item you would like to purchase.",
+          validate: function(value) {
+            if (isNaN(value) === false) {
+              if (value >= 1 && value <= 9) {
+                return true;
+              }
+            }
+            console.log("\n Please enter a valid ID number");
+            return false;
+          }
         },
         {
           type: "input",
           name: "itemQuantity",
-          message: "How many would you like?"
+          message: "How many would you like?",
+          validate: function(value) {
+            if (isNaN(value) === false) {
+              return true;
+            }
+            return false;
+          }
         }
       ])
       .then(function(answer) {
-        if (res[answer.itemID].stock_quantity < answer.itemQuantity) {
+        var idArrayIndex = answer.itemID - 1;
+        if (res[idArrayIndex].stock_quantity < answer.itemQuantity) {
           console.log("Insufficient quantity!");
+          endConnection();
+        } else {
+          updateProduct();
         }
       });
-
-    connection.end();
   });
+}
+
+function updateProduct() {}
+
+function endConnection() {
+  inquirer.prompt([
+    {
+      type: "confirm",
+      name: "continue",
+      message: "Would you like to make another order?"
+    }
+  ]);
 }
